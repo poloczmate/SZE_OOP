@@ -54,8 +54,8 @@ public:
 
 class Keszlet{
     Keszlet() {}
-    Keszlet(const Keszlet&) = delete; // copy assignement, copy konstruktor letiltva
-	Keszlet& operator=(const Keszlet&) = delete;
+    Keszlet(const Keszlet&) = delete; // copy assignement
+	Keszlet& operator=(const Keszlet&) = delete;	// copy konstruktor letiltva
 	std::vector<std::pair<Termek*, int>> k;
 public:
     static Keszlet* GetInstance(){
@@ -74,6 +74,16 @@ public:
 			}
 		}
 		return 0;
+	}
+	void rendel(Termek* t, int q){
+		for(auto ts : k){
+			int pos = 0;
+			if (ts.first == t) {
+				ts.second = ts.second-q; // ez nem eleg mivel mutatoval porgetem vegig es cska azt allitom at...
+				k[pos].second = ts.second; // itt mar az eredetit allitom at
+			}
+			pos++;
+		}
 	}
 };
 
@@ -100,6 +110,14 @@ int main(){
 
 	std::cout << laptop->getName() << " " << keszlet->getQuantity(laptop) << " mennyisegben all rendelkezesre" << std::endl; // 15
 	std::cout << mobil3->getName() << " " << keszlet->getQuantity(mobil3) << " mennyisegben all rendelkezesre" << std::endl; // 0
+
+	//harmas szint:
+	std::cout << "done" << std::endl;
+
+	if (keszlet->getQuantity(laptop) > 5) {
+		keszlet->rendel(laptop, 5);
+		std::cout << laptop->getName() << " mar csak " << keszlet->getQuantity(laptop) << " mennyisegben all rendelkezesre" << std::endl; // 10
+	}
 
     delete laptop;
 	delete mobil1;
