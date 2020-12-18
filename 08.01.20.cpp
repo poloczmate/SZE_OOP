@@ -33,34 +33,48 @@
 // Termek felvétele helyett
 
 class Termek{
-
+	std::string name;
+	int price;
+public:
+	Termek(std::string name, int price) : name(name), price(price) {}
+	std::string getName() const {return name;}
+	int getPrice() const {return price;}
 };
 
 class Mobil : public Termek{
-    std::string name;
-    int price;
     std::string IMEI;
 public:
-    Mobil(std::string name, int price, std::string IMEI) : name(name), price(price), IMEI(IMEI) {}
+    Mobil(std::string name, int price, std::string IMEI) : Termek(name,price), IMEI(IMEI) {}
 };
 
 class Laptop : public Termek{
-    std::string name;
-    int price;
 public:
-    Laptop(std::string name, int price) : name(name), price(price) {}
+    Laptop(std::string name, int price) : Termek(name,price) {}
 };
 
 class Keszlet{
     Keszlet() {}
     Keszlet(const Keszlet&) = delete; // copy assignement, copy konstruktor letiltva
 	Keszlet& operator=(const Keszlet&) = delete;
-	std::vector<std::pair<Termek*, int>> keszlet_vec;
+	std::vector<std::pair<Termek*, int>> k;
 public:
     static Keszlet* GetInstance(){
         static Keszlet* k = new Keszlet();
         return k;
     }
+	void addTermek(Termek* t, int q){
+		k.push_back(std::make_pair(t,q));
+	}
+	int getQuantity(Termek* t) const{
+		for (auto ts : k)
+		{
+			if (ts.first == t)
+			{
+				return ts.second;
+			}
+		}
+		return 0;
+	}
 };
 
 int main(){
