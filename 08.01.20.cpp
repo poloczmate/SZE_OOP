@@ -61,6 +61,10 @@ public:
 	 }
 };
 
+bool operator==(Termek& t1, Termek& t2){
+	return t1.getName() == t2.getName() && t1.getPrice() == t2.getPrice();
+}
+
 class Keszlet{
     Keszlet() {}
     Keszlet(const Keszlet&) = delete; // copy assignement
@@ -77,7 +81,7 @@ public:
 	int getQuantity(Termek* t) const{
 		for (auto ts : k)
 		{
-			if (ts.first == t)
+			if (*ts.first == *t)
 			{
 				return ts.second;
 			}
@@ -106,6 +110,20 @@ public:
 			}
 			pos++;
 		}
+	}
+	void addTermekChecked(Termek* t, int q){
+		int pos = 0;
+		bool add = true;
+		for(auto ts : k){
+			if (*ts.first == *t)
+			{
+				add = false;
+				ts.second += q;
+				k[pos].second = ts.second;
+			}
+			pos++;
+		}
+		if(add) k.push_back(std::make_pair(t,q));
 	}
 };
 
@@ -148,6 +166,16 @@ int main(){
 	catch (OutOfKeszletError e) {
 		std::cout << e.getMsg() << std::endl; // kiirja h "nincs tobb a keszleten"
 	}
+
+	//otoshoz kell
+	Termek* mobil4 = new Mobil("Samsung", 800, "62-882612-847221-1");
+	// egyszer mar hozzadtunk mobil2-bol 23-at:
+	keszlet->addTermekChecked(mobil4, 5); // vajon most 28 van belole?
+	// az implementaciohoz operator== fv megvalositasa szukseges
+	// + okosabb getQuantity is kell...
+	std::cout << mobil4->getName() << " " << keszlet->getQuantity(mobil4) << " mennyisegben all rendelkezesre" << std::endl; // 28
+
+	delete mobil4;
 
     delete laptop;
 	delete mobil1;
