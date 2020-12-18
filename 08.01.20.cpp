@@ -52,6 +52,15 @@ public:
     Laptop(std::string name, int price) : Termek(name,price) {}
 };
 
+class OutOfKeszletError : public std::exception{
+	std::string msg;
+public:
+	 OutOfKeszletError(const std::string& msg) : msg(msg) {}
+	 std::string getMsg(){
+		 return msg;
+	 }
+};
+
 class Keszlet{
     Keszlet() {}
     Keszlet(const Keszlet&) = delete; // copy assignement
@@ -79,6 +88,19 @@ public:
 		for(auto ts : k){
 			int pos = 0;
 			if (ts.first == t) {
+				ts.second = ts.second-q; // ez nem eleg mivel mutatoval porgetem vegig es cska azt allitom at...
+				k[pos].second = ts.second; // itt mar az eredetit allitom at
+			}
+			pos++;
+		}
+	}
+	void checkedRendel(Termek* t, int q){
+		for(auto ts : k){
+			int pos = 0;
+			if (ts.first == t) {
+				if (ts.second < q) {
+					throw OutOfKeszletError("Nincs eleg az adott termekbol!");
+				}
 				ts.second = ts.second-q; // ez nem eleg mivel mutatoval porgetem vegig es cska azt allitom at...
 				k[pos].second = ts.second; // itt mar az eredetit allitom at
 			}
@@ -117,6 +139,14 @@ int main(){
 	if (keszlet->getQuantity(laptop) > 5) {
 		keszlet->rendel(laptop, 5);
 		std::cout << laptop->getName() << " mar csak " << keszlet->getQuantity(laptop) << " mennyisegben all rendelkezesre" << std::endl; // 10
+	}
+
+	//negyeshez kell
+	try {
+		keszlet->checkedRendel(laptop, 12);
+	}
+	catch (OutOfKeszletError e) {
+		std::cout << e.getMsg() << std::endl; // kiirja h "nincs tobb a keszleten"
 	}
 
     delete laptop;
