@@ -24,7 +24,7 @@ public:
     ClonableString(std::string s) : s(s) {}
     std::string getString() const { return s;}
     virtual Clonable* clone() const{
-        ClonableString* c = new ClonableString(s);
+        Clonable* c = new ClonableString(s);
         return c;
     }
 };
@@ -35,7 +35,7 @@ public:
     ClonableNumber(double d) : d(d) {}
     double getNumber() const { return d;}
     virtual Clonable* clone() const{
-        ClonableNumber* c = new ClonableNumber(d);
+        Clonable* c = new ClonableNumber(d);
         return c;
     }
 };
@@ -43,10 +43,14 @@ public:
 class CloneContainer{
     std::vector<Clonable*> cont;
 public:
-    void push_back(const Clonable c){
-        Clonable* a = c.clone();
-        cont.push_back(a);
-    }
+    void push_back(const ClonableNumber c) {
+		Clonable* a = c.clone();
+		cont.push_back(a);
+	}
+	void push_back(const ClonableString c) {
+		Clonable* a = c.clone();
+		cont.push_back(a);
+	}
     ~CloneContainer(){
         for(auto c : cont){
             delete c;
