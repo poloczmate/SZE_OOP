@@ -23,8 +23,8 @@ class ClonableString : public Clonable{
 public:
     ClonableString(std::string s) : s(s) {}
     std::string getString() const { return s;}
-    virtual Clonable* clone() const{
-        Clonable* c = new ClonableString(s);
+    virtual ClonableString* clone() const{
+        ClonableString* c = new ClonableString(s);
         return c;
     }
 };
@@ -34,8 +34,8 @@ class ClonableNumber : public Clonable{
 public:
     ClonableNumber(double d) : d(d) {}
     double getNumber() const { return d;}
-    virtual Clonable* clone() const{
-        Clonable* c = new ClonableNumber(d);
+    virtual ClonableNumber* clone() const{
+        ClonableNumber* c = new ClonableNumber(d);
         return c;
     }
 };
