@@ -62,7 +62,7 @@ A Galaktikus Birodalom új csillagrombolókat készül építtetni az új kísé
 
 // Ez a resz a kivant szintnek megfeleloen valtoztathato (0 vagy 1)
 #define SZINT_2 1
-#define SZINT_3 0
+#define SZINT_3 1
 #define SZINT_4 0
 #define SZINT_5 0
 // Ha fejleszt, erdemes kikapcsolni az ellenorzest
@@ -186,6 +186,43 @@ public:
     int getTartalekLegenyseg(){
         return tartalek;
     }
+	void addLegenyseg(std::string name, int szam){
+		for(auto a: f){
+			if (a->getName() == name)
+			{
+				a->addLegenyseg(szam);
+				tartalek -= szam;
+			}
+			
+		}
+	}
+	void addLegenyseg(CsillagRombolo* c, int szam){
+		for(auto a: f){
+			if (a->getName() == c->getName())
+			{
+				a->addLegenyseg(szam);
+				tartalek -= szam;
+			}
+			
+		}
+	}
+	void tartalekbaHelyez(std::string name, int szam){
+		for(auto a: f){
+			if (a->getName() == name)
+			{
+				a->removeLegenyseg(szam);
+				tartalek += szam;
+			}
+		}
+	}
+	int getOsszesLegenyseg(){
+		int toReturn = 0;
+		toReturn += tartalek;
+		for(auto a : f){
+			toReturn += a->getLegenyseg();
+		}
+		return toReturn;
+	}
 };
 	Flotta* Flotta::instance = 0;
 
