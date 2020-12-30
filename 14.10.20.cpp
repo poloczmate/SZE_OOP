@@ -64,7 +64,7 @@ A Galaktikus Birodalom új csillagrombolókat készül építtetni az új kísé
 #define SZINT_2 1
 #define SZINT_3 1
 #define SZINT_4 1
-#define SZINT_5 0
+#define SZINT_5 1
 // Ha fejleszt, erdemes kikapcsolni az ellenorzest
 #define ELLENORZES 1
 // Ezt a reszt TILOS megvaltoztatni
@@ -143,6 +143,21 @@ public:
     }
 };
 
+bool operator==(CsillagRombolo& cs1, CsillagRombolo& cs2){
+	if (cs1.getName() == cs2.getName())
+	{
+		return true;
+	}else{
+		return false;
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, CsillagRombolo& cs)
+{
+    os << cs.getName() << std::endl << cs.getLegenyseg() << std::endl<< cs.getMinLegenyseg() << std::endl<< cs.getMaxLegenyseg() << std::endl;
+    return os;
+}
+
 class ErrorLegenyseg : public std::runtime_error{
 	std::string msg;
 public:
@@ -162,6 +177,9 @@ class Flotta{
     Flotta() {};
     static Flotta* instance;
 public:
+	std::vector<CsillagRombolo*> getVector(){
+		return f;
+	}
     Flotta(const Flotta &) = delete;
     Flotta &operator=(const Flotta &) = delete;
     static Flotta* getInstance(){
@@ -271,8 +289,21 @@ public:
 			tartalek -= szam;
 		}
 	}
+	void addCsillagromboloChecked(CsillagRombolo* c){
+		for(auto a: f){
+			if (*a == *c) a->addLegenyseg(c->getLegenyseg());
+		}
+	}
 };
 	Flotta* Flotta::instance = 0;
+
+std::ostream& operator<<(std::ostream& os, Flotta& fl)
+{
+	for(auto a : fl.getVector()){
+		os << a->getName() << std::endl << a->getLegenyseg() << std::endl<< a->getMinLegenyseg() << std::endl<< a->getMaxLegenyseg() << std::endl << std::endl;
+	}
+    return os;
+}
 
 // A vizsgafeladatot tartalmazo fuggveny. Szabadon lehet kikommentelni egyes hivasokat.
 // Az assert reszek nem valtoztathatok meg. Ezek megvaltoztatasa a vizsga sikertelenseget vonja maga utan.
