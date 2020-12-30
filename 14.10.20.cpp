@@ -66,7 +66,7 @@ A Galaktikus Birodalom új csillagrombolókat készül építtetni az új kísé
 #define SZINT_4 0
 #define SZINT_5 0
 // Ha fejleszt, erdemes kikapcsolni az ellenorzest
-#define ELLENORZES 0
+#define ELLENORZES 1
 // Ezt a reszt TILOS megvaltoztatni
 #include <iostream>
 #include <cassert>
@@ -74,12 +74,120 @@ A Galaktikus Birodalom új csillagrombolókat készül építtetni az új kísé
 
 
 // Ebben a reszben szabadon lehet include-olni tovabbi fajlokat
-#include "csillagrombolo.h"
+#include <vector>
 
 
 // END INCLUDE
 
 // Ide kerulhet az implementacio
+#define minLeg
+#define maxLeg
+#define minLez
+#define maxLez
+class CsillagRombolo{
+    const std::string name;
+    int leg;
+    int lez;
+    const int minLeg_;
+    const int maxLeg_;
+    const int minLez_;
+    const int maxLez_;
+public:
+    virtual int tuzero() = 0;
+    CsillagRombolo(std::string name, int leg, int lez, int minLegeny, int maxLegeny, int minLezer, int maxLezer) : name(name), leg(leg), lez(lez), minLeg_(minLegeny), maxLeg_(maxLegeny), minLez_(minLezer), maxLez_(maxLezer) {}
+    unsigned int getLegenyseg(){
+        return leg;
+    }
+    std::string getName(){
+        return name;
+    }
+    void addLegenyseg(unsigned int legenyseg) {
+        leg += legenyseg;
+    }
+    void removeLegenyseg(unsigned int legenyseg) {
+        leg -= legenyseg;
+    }
+    bool checkUzemkepes(){
+        return getLegenyseg() >= minLeg_;
+    }
+    int getMaxLegenyseg(){return maxLeg_;}
+    int getMinLegenyseg(){return minLeg_;}
+    int getLezer(){return lez;}
+};
+
+class Imperial : public CsillagRombolo{
+public:
+    Imperial(std::string name, int leg, int lez) : CsillagRombolo(name,leg,lez,29000,45000,40,80) {}
+    int tuzero(){
+        if (getMaxLegenyseg() >= getLegenyseg() && getLegenyseg() >= getMinLegenyseg())
+        {
+            return 100 * getLezer();
+        }
+        return 0;
+    }
+};
+
+class Executor : public CsillagRombolo{
+    const int ion;
+    const int minIon;
+    const int maxIon;
+public:
+    Executor(std::string name, int leg, int lez, int ion) : CsillagRombolo(name,leg,lez,50000,350000,1500,2500), ion(ion), minIon(200), maxIon(300) {}
+    int getIon() { return ion;}
+    int tuzero(){
+        if (getMaxLegenyseg() >= getLegenyseg() && getLegenyseg() >= getMinLegenyseg())
+        {
+            return 150 * getLezer() + 1000 * getIon();
+        }
+        return 0;
+    }
+};
+
+
+class Flotta{
+    int tartalek = 0;
+    std::vector<CsillagRombolo*> f;
+    Flotta() {};
+    static Flotta* instance;
+public:
+    Flotta(const Flotta &) = delete;
+    Flotta &operator=(const Flotta &) = delete;
+    static Flotta* getInstance(){
+        if (!instance)
+        {
+            instance = new Flotta();
+        }
+        return instance;
+    }
+    void freeInstance(){
+        if (instance)
+        {
+            delete instance;
+        }
+    }
+    void addCsillagrombolo(CsillagRombolo* cs){
+        f.push_back(cs);
+    }
+    CsillagRombolo* getCsillagRombolo(std::string name){
+        for(auto a : f){
+            if (a->getName() == name)
+            {
+                return a;
+            }
+        }
+        return nullptr;
+    }
+    int getQuantity(){
+        return f.size();
+    }
+    void addTartalekLegenyseg(unsigned int a){
+        tartalek += a;
+    }
+    int getTartalekLegenyseg(){
+        return tartalek;
+    }
+};
+	Flotta* Flotta::instance = 0;
 
 // A vizsgafeladatot tartalmazo fuggveny. Szabadon lehet kikommentelni egyes hivasokat.
 // Az assert reszek nem valtoztathatok meg. Ezek megvaltoztatasa a vizsga sikertelenseget vonja maga utan.
@@ -89,7 +197,7 @@ void vizsga()
 #if SZINT_2
 	std::cout << "-------   2-es szint -----------\n";
 	// Ellenorzeskent ezt a reszt kommentelje ki! Ha ezt kikommenteli es jol implementalta a feladatot, akkor a programnak nem szabad lefordulnia!
-	// CsillagRombolo cs1;
+	//CsillagRombolo cs1;
 	// Csillagrombolok peldanyositasa
 	Imperial* vehement = new Imperial("Vehement", 37000, 80);
 	Imperial* exactor =  new Imperial("Exactor", 32000, 70);
@@ -312,7 +420,7 @@ void vizsga()
 	delete vehement2;
 #endif // SZINT_5
 
-
+    
 	delete vehement;
 	delete exactor;
 	delete devastator;
@@ -325,7 +433,7 @@ void vizsga()
 // Ezt a reszt TILOS megvaltoztatni
 int main(int argc, char** argv)
 {
-	vizsga();
+    vizsga();
 	return 0;
 }
 // END TILOS
