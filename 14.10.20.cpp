@@ -63,7 +63,7 @@ A Galaktikus Birodalom új csillagrombolókat készül építtetni az új kísé
 // Ez a resz a kivant szintnek megfeleloen valtoztathato (0 vagy 1)
 #define SZINT_2 1
 #define SZINT_3 1
-#define SZINT_4 0
+#define SZINT_4 1
 #define SZINT_5 0
 // Ha fejleszt, erdemes kikapcsolni az ellenorzest
 #define ELLENORZES 1
@@ -143,6 +143,18 @@ public:
     }
 };
 
+class ErrorLegenyseg : public std::runtime_error{
+	std::string msg;
+public:
+	ErrorLegenyseg(const std::string& msg) : std::runtime_error(msg) {}
+	std::string getMsg(){return msg;}
+};
+class ErrorTartalekos : public std::runtime_error{
+	std::string msg;
+public:
+	ErrorTartalekos(const std::string& msg) : std::runtime_error(msg) {}
+		std::string getMsg(){return msg;}
+};
 
 class Flotta{
     int tartalek = 0;
@@ -197,18 +209,21 @@ public:
 		}
 	}
 	void addLegenyseg(CsillagRombolo* c, int szam){
-		for(auto a: f){
-			if (a->getName() == c->getName())
-			{
-				a->addLegenyseg(szam);
-				tartalek -= szam;
-			}
-			
-		}
+		c->addLegenyseg(szam);
+		tartalek -= szam;
 	}
 	void tartalekbaHelyez(std::string name, int szam){
 		for(auto a: f){
 			if (a->getName() == name)
+			{
+				a->removeLegenyseg(szam);
+				tartalek += szam;
+			}
+		}
+	}
+	void tartalekbaHelyez(CsillagRombolo* c, int szam){
+		for(auto a: f){
+			if (a->getName() == c->getName())
 			{
 				a->removeLegenyseg(szam);
 				tartalek += szam;
@@ -222,6 +237,39 @@ public:
 			toReturn += a->getLegenyseg();
 		}
 		return toReturn;
+	}
+	CsillagRombolo* checkImmobility(){
+		for(auto a: f){
+			if (a->getLegenyseg() < a->getMinLegenyseg())
+			{
+				return a;
+			}
+			
+		}
+		return nullptr;
+	}
+	void addLegenysegChecked(CsillagRombolo* c, int szam){
+		if (c->getMaxLegenyseg() < (c->getLegenyseg() + szam))	throw ErrorLegenyseg("Tul sok a legenyseg");
+		if(szam > tartalek) throw ErrorTartalekos("Nincs eleg tartalekos");
+		c->addLegenyseg(szam);
+		tartalek -= szam;
+	}
+	void tartalekbaHelyezChecked(CsillagRombolo* c, int szam){
+		if (c->getLegenyseg() - szam < c->getMinLegenyseg())
+		{
+			throw ErrorLegenyseg("Igy tul keves ember lenne a hajon.");
+		}else{
+			c->removeLegenyseg(szam);
+			tartalek += szam;
+		}
+	}
+	void removeTartalekosChecked(int szam){
+		if (tartalek - szam < 0)
+		{
+			throw ErrorTartalekos("Nincs ennyi tartalekos");
+		}else{
+			tartalek -= szam;
+		}
 	}
 };
 	Flotta* Flotta::instance = 0;
@@ -325,7 +373,6 @@ void vizsga()
 	std::cout << "-----------------------\n";
 #endif
 
-
 #if SZINT_3	
 	std::cout << "-------   3-as szint -----------\n";
 	flotta->addLegenyseg("Executor", 10000);
@@ -352,7 +399,6 @@ void vizsga()
 #endif
 	std::cout << "------------------\n";
 #endif // SZINT_3
-
 
 
 #if SZINT_4
