@@ -106,16 +106,13 @@ public:
     int lampCount(){
         return lampak.size();
     } 
-    Lamp operator[](int index)
+    Lamp& operator[](int index)
     {
         return *lampak.at(index);
     }
     void setAllLamps(bool on){
         for(auto l: lampak){
-            while(l->isOn() != on){
-                l->flip();
-            }
-            
+            if(l->isOn() != on) l->flip();
         }
     }
 };
