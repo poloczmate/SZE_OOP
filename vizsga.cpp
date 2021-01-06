@@ -49,7 +49,7 @@ public:
         }
         return fenyero;
     }
-    void flip override(){
+    void flip(){
         if (!isOn())
         {   
             setOn();
