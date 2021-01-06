@@ -20,7 +20,8 @@ public:
     string getName(){
         return name;
     }
-    void flip(){
+    virtual void setBrightness(int a);
+    virtual void flip(){
         if (isOn())
         {
             on = false;
@@ -31,6 +32,7 @@ public:
         }
         
     }
+    virtual ~Lamp(){}
 };
 
 class DimmableLamp : public Lamp{
@@ -53,7 +55,7 @@ public:
         if (!isOn())
         {   
             setOn();
-            cout << getName() << " turned ON at " << getBrightness() << "brightness" << std::endl;
+            cout << getName() << " turned ON at " << getBrightness() << " brightness" << std::endl;
         }else{
             setOff();
             cout << getName() << " turned OFF" << std::endl;
