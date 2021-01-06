@@ -119,7 +119,10 @@ public:
     }
     void setAllLamps(bool on){
         for(auto l: lampak){
-            l->flip();
+            while(l->isOn() != on){
+                l->flip();
+            }
+            
         }
     }
 };
