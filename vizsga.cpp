@@ -106,16 +106,16 @@ public:
     int lampCount(){
         return lampak.size();
     } 
-    Lamp* operator[](int index)
+    Lamp operator[](int index)
     {
         int counter = 0;
         for(auto l : lampak){
             if (counter == index){
-                return l;
+                return *l;
             }
             counter++;
         }
-        return nullptr;
+        return Lamp("");
     }
     void setAllLamps(bool on){
         for(auto l: lampak){
