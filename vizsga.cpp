@@ -31,12 +31,12 @@ public:
         if (isOn())
         {
             on = false;
-            cout << getName() << "turned OFF" << std::endl;
+            cout << getName() << " turned OFF" << std::endl;
         }
         else
         {
             on = true;
-            cout << getName() << "turned ON" << std::endl;
+            cout << getName() << " turned ON" << std::endl;
         }
     }
     virtual ~Lamp() {}
