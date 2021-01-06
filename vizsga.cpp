@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 class Lamp
@@ -88,38 +89,72 @@ public:
         }
     }
 };
+
+class Room{
+    std::vector<Lamp*> lampak;
+public:
+    ~Room(){
+        for (auto l : lampak)
+        {
+            delete l;
+        }
+    }
+    void add(Lamp *l)
+    {
+        lampak.push_back(l);
+    }
+    int lampCount(){
+        return lampak.size();
+    } 
+    Lamp* operator[](int index)
+    {
+        int counter = 0;
+        for(auto l : lampak){
+            if (counter == index){
+                return l;
+            }
+            counter++;
+        }
+        return nullptr;
+    }
+    void setAllLamps(bool on){
+        for(auto l: lampak){
+            l->flip();
+        }
+    }
+};
+
 //innentol main **************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************
-int main()
+int
+main()
 {
     using namespace std;
 
-    Lamp *l1 = new Lamp("Desk lamp");
-    cout << "Test 1: " << l1->isOn() << endl;
-    l1->flip();
-    cout << "Test 2: " << l1->isOn() << endl;
-    l1->flip();
-    cout << "Test 3: " << l1->isOn() << endl;
+    Room r;
+    cout << "Test 1: " << r.lampCount() << endl;
+    r.add(new Lamp("Desk lamp"));
+    cout << "Test 2: " << r.lampCount() << endl;
+    cout << "Test 3: " << r[0].isOn() << endl;
+    r[0].flip();
+    cout << "Test 4: " << r[0].isOn() << endl;
+    r.setAllLamps(false);
+    r.setAllLamps(false);
+    r.setAllLamps(true);
+    r.setAllLamps(true);
+    r.setAllLamps(false);
 
-    cout << "DimmableLamp tests" << endl;
-    DimmableLamp *dl = new DimmableLamp("Ceiling lamp");
-    Lamp *l2 = dl;
-    cout << "Test 4: " << l2->isOn() << endl;
-    cout << "Test 5: " << dl->getBrightness() << endl;
-    l2->flip();
-    cout << "Test 6: " << l2->isOn() << endl;
-    cout << "Test 7: " << dl->getBrightness() << endl;
-    dl->setBrightness(-50);
-    cout << "Test 8: " << dl->getBrightness() << endl;
-    l2->flip();
-    cout << "Test 9: " << l2->isOn() << endl;
-    l2->flip();
-    dl->setBrightness(0);
-    cout << "Test 10: " << dl->getBrightness() << endl;
-    dl->setBrightness(101);
-    cout << "Test 11: " << dl->getBrightness() << endl;
-
-    delete l1;
-    delete l2;
-
-    return 0;
+    r.add(new DimmableLamp("Ceiling lamp"));
+    cout << "DimmableLamp is bought" << endl;
+    cout << "Test 5: " << r.lampCount() << endl;
+    cout << "Test 6: " << r[1].isOn() << endl;
+    r[1].flip();
+    cout << "Test 7: " << r[1].isOn() << endl;
+    r.setAllLamps(false);
+    r[0].flip();
+    r.setAllLamps(true);
+    r[1].flip();
+    r.setAllLamps(true);
+    r.setAllLamps(true);
+    r.setAllLamps(false);
+    r.setAllLamps(false);
 }
