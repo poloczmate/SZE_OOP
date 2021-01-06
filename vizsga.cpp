@@ -53,17 +53,17 @@ public:
         /*fenyero += a;
         if(fenyero > 100) fenyero = 100;
         if(fenyero < 1) fenyero = 1;*/
-        if (fenyero + uj > 100)
+        fenyero = uj;
+        if (fenyero > 100)
         {
             fenyero = 100;
             //cout << getName() << " turned ON at " << brightness << "% brightness"<<endl;
         }
-        if (fenyero + uj < 1)
+        if (fenyero < 1)
         {
             fenyero = 1;
             //cout << getName() << " turned ON at " << brightness << "% brightness"<<endl;
         }
-        fenyero += uj;
         //cout << getName() << " turned ON at " << brightness << "% brightness" << endl;
     }
     int getBrightness()
@@ -79,7 +79,7 @@ public:
         if (!isOn())
         {
             setOn();
-            cout << getName() << " turned ON at " << getBrightness() << " brightness" << std::endl;
+            cout << getName() << " turned ON at " << getBrightness() << "% brightness" << std::endl;
         }
         else
         {
@@ -108,7 +108,7 @@ int main()
     l2->flip();
     cout << "Test 6: " << l2->isOn() << endl;
     cout << "Test 7: " << dl->getBrightness() << endl;
-    dl->setBrightness(50);
+    dl->setBrightness(-50);
     cout << "Test 8: " << dl->getBrightness() << endl;
     l2->flip();
     cout << "Test 9: " << l2->isOn() << endl;
