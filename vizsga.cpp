@@ -2,67 +2,91 @@
 #include <string>
 using namespace std;
 
-class Lamp{
+class Lamp
+{
 private:
     bool on = false;
     string name;
+
 public:
     Lamp(string name) : name(name) {}
-    bool isOn(){
+    bool isOn()
+    {
         return on;
     }
-    void setOn(){
+    void setOn()
+    {
         on = true;
     }
-    void setOff(){
+    void setOff()
+    {
         on = false;
     }
-    string getName(){
+    string getName()
+    {
         return name;
     }
-    virtual void setBrightness(int a);
-    virtual void flip(){
+    virtual void flip()
+    {
         if (isOn())
         {
             on = false;
             cout << getName() << "turned OFF" << std::endl;
-        }else{
+        }
+        else
+        {
             on = true;
             cout << getName() << "turned ON" << std::endl;
         }
-        
     }
-    virtual ~Lamp(){}
+    virtual ~Lamp() {}
 };
 
-class DimmableLamp : public Lamp{
-    int fenyero = 100;
+class DimmableLamp : public Lamp
+{
+    int fenyero;
+
 public:
-    DimmableLamp(string name) : Lamp(name) {}
-    void setBrightness(int a) {
-        fenyero += a;
+    DimmableLamp(string name) : Lamp(name), fenyero(100) {}
+    void setBrightness(int uj)
+    {
+        /*fenyero += a;
         if(fenyero > 100) fenyero = 100;
-        if(fenyero < 1) fenyero = 1;
+        if(fenyero < 1) fenyero = 1;*/
+        if (fenyero + uj > 100)
+        {
+            fenyero = 100;
+            //cout << getName() << " turned ON at " << brightness << "% brightness"<<endl;
+        }
+        if (fenyero + uj < 1)
+        {
+            fenyero = 1;
+            //cout << getName() << " turned ON at " << brightness << "% brightness"<<endl;
+        }
+        fenyero += uj;
+        //cout << getName() << " turned ON at " << brightness << "% brightness" << endl;
     }
-    int getBrightness(){
+    int getBrightness()
+    {
         if (!isOn())
         {
             return 0;
         }
         return fenyero;
     }
-    void flip(){
+    void flip()
+    {
         if (!isOn())
-        {   
+        {
             setOn();
             cout << getName() << " turned ON at " << getBrightness() << " brightness" << std::endl;
-        }else{
+        }
+        else
+        {
             setOff();
             cout << getName() << " turned OFF" << std::endl;
-            
         }
     }
-
 };
 //innentol main **************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************
 int main()
