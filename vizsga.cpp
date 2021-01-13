@@ -2,7 +2,7 @@
 // ********************************************
 
 #include <array>
-#include <list>
+#include <vector>
 
 class Lamp
 {
@@ -12,13 +12,16 @@ class Lamp
 public:
     Lamp(std::string name) : name(name), on(false){};
     virtual ~Lamp() {}
-    std::string getName() const{
+    std::string getName() const
+    {
         return name;
     }
-    void tf(){
+    void tf()
+    {
         on = false;
     }
-    void tn(){
+    void tn()
+    {
         on = true;
     }
     bool isOn()
@@ -54,8 +57,9 @@ class RGBLamp : public Lamp
     int red;
     int green;
     int blue;
+
 public:
-    RGBLamp(std::string name) : Lamp(name), red(255), green(255), blue(255){}
+    RGBLamp(std::string name) : Lamp(name), red(255), green(255), blue(255) {}
     int getRed()
     {
         if (isOn() == false)
@@ -119,60 +123,102 @@ public:
     }
 };
 
+class Room
+{
+    std::vector<Lamp *> lampak;
+
+public:
+    void add(Lamp *l)
+    {
+        lampak.push_back(l);
+    }
+    ~Room()
+    {
+        for (auto a : lampak)
+        {
+            delete a;
+        }
+    }
+    void clear()
+    {
+        lampak.clear();
+        Room::~Room();
+    }
+    int lampCount()
+    {
+        return lampak.size();
+    }
+    Lamp &operator[](int index)
+    {
+        return *lampak[index];
+    }
+    void setAllLamps(bool on)
+    {
+        for (auto a : lampak)
+        {
+            if (on == false) // kikapcsolni
+            {
+                if (a->isOn() != on)
+                {
+                    a->turnOff();
+                }
+            }
+            else
+            {
+                if (a->isOn() != on)
+                {
+                    a->turnOn();
+                }
+            }
+        }
+    }
+};
+
 // ********************************************
 int
 main()
 {
     using namespace std;
-    Lamp *l1 = new Lamp("Desk lamp");
-    if (l1->isOn())
-        cout << "Hiba: kezdetben kikapcsoltnak kell lennie a lampanak.\n";
-    l1->turnOff();
-    if (l1->isOn())
-        cout << "Hiba: redundans kikapcsolas utan vilagit a lampa.\n";
-    cout << "Bekapcsolas: ";
-    l1->turnOn();
-    if (!l1->isOn())
-        cout << "Hiba: bekapcsolas utan sem vilagit a lampa.\n";
-    l1->turnOn();
-    if (!l1->isOn())
-        cout << "Hiba: redundans bekapcsolas utan nem vilagit a lampa.\n";
-    cout << "Kikapcsolas: ";
-    l1->turnOff();
-    if (l1->isOn())
-        cout << "Hiba: kikapcsolas utan is vilagit a lampa.\n";
-
-    cout << "RGBLamp tesztek" << endl;
-    RGBLamp *rl = new RGBLamp("Ceiling lamp");
-    Lamp *l2 = rl;
-    if (l2->isOn())
-        cout << "Hiba: kezdetben kikapcsoltnak kell lennie az RGB lampanak.\n";
+    Room r;
+    if (r.lampCount() != 0)
+        cout << "Hiba: ures szobaban nem lehet lampa\n";
+    r.add(new Lamp("Desk lamp"));
+    if (r.lampCount() != 1)
+        cout << "Hiba: nem 1 lampa van a szobaban\n";
+    r[0].turnOn();
+    if (!r[0].isOn())
+        cout << "Hiba: nincs felkapcsolva a lampa\n";
+    r.setAllLamps(false);
+    r.add(new RGBLamp("Ceiling lamp"));
+    if (r.lampCount() != 2)
+        cout << "Hiba: nem 2 lampa van a szobaban\n";
+    r[1].turnOn();
+    if (!r[1].isOn())
+        cout << "Hiba: nincs felkapcsolva a 2. lampa\n";
+    r.add(new RGBLamp("Kitchen lamp"));
+    if (r.lampCount() != 3)
+        cout << "Hiba: nem 3 lampa van a szobaban\n";
+    r.setAllLamps(true);
+    r.add(new Lamp("Reading lamp"));
+    if (r.lampCount() != 4)
+        cout << "Hiba: nem 4 lampa van a szobaban\n";
+    r.setAllLamps(false);
+    r.setAllLamps(true);
+    r.clear();
+    if (r.lampCount() != 0)
+        cout << "Hiba: kiuritett szobaban nem lehet lampa\n";
+    RGBLamp *rl = new RGBLamp("Bedside lamp");
+    rl->setColor(64, 12, 36);
+    r.add(rl);
     if (rl->getRed() != 0 || rl->getGreen() != 0 || rl->getBlue() != 0)
         cout << "Hiba: a kikapcsolt lampa szine nem fekete.\n";
-    rl->turnOff();
-    if (l2->isOn())
-        cout << "Hiba: redundans kikapcsolas utan vilagit az RGB lampa.\n";
-    cout << "Bekapcsolas: ";
-    l2->turnOn();
-    if (rl->getRed() != 255 || rl->getGreen() != 255 || rl->getBlue() != 255)
-        cout << "Hiba: az RGB lampa kezdetben nem feher.\n";
-    rl->turnOn();
-    if (!l2->isOn())
-        cout << "Hiba: redundans bekapcsolas utan nem vilagit az RGB lampa.\n";
-    if (rl->getRed() != 255 || rl->getGreen() != 255 || rl->getBlue() != 255)
-        cout << "Hiba: az RGB lampa mar nem feher.\n";
-    rl->setColor(100, 128, 200);
-    if (rl->getRed() != 100 || rl->getGreen() != 128 || rl->getBlue() != 200)
+    r.setAllLamps(true);
+    if (rl->getRed() != 64 || rl->getGreen() != 12 || rl->getBlue() != 36)
         cout << "Hiba: az RGB lampa nem a kert szinu.\n";
-    cout << "Kikapcsolas: ";
-    rl->turnOff();
-    if (rl->getRed() != 0 || rl->getGreen() != 0 || rl->getBlue() != 0)
-        cout << "Hiba: a kikapcsolt lampa szine nem fekete.\n";
-    rl->turnOn();
-    if (rl->getRed() != 100 || rl->getGreen() != 128 || rl->getBlue() != 200)
-        cout << "Hiba: az RGB lampa nem a kert szinu.\n";
-
-    delete l1;
-    delete l2;
+    r.add(new Lamp("Floor lamp"));
+    if (r.lampCount() != 2)
+        cout << "Hiba: nem 2 lampa van a szobaban\n";
+    r.setAllLamps(true);
+    r.setAllLamps(false);
     return 0;
 }
