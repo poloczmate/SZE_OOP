@@ -141,8 +141,11 @@ public:
     }
     void clear()
     {
+        for (auto a : lampak)
+        {
+            delete a;
+        }
         lampak.clear();
-        Room::~Room();
     }
     int lampCount()
     {
@@ -172,6 +175,20 @@ public:
             }
         }
     }
+    void setColor(int r, int g, int b){
+        for (auto a : lampak)
+        {
+            RGBLamp* abc = dynamic_cast<RGBLamp*>(a);
+            if (abc != nullptr)
+            {
+                abc->setColor(r,g,b);
+            }else{
+                a->turnOff();
+            }
+            
+        }
+        
+    }
 };
 
 // ********************************************
@@ -180,45 +197,54 @@ main()
 {
     using namespace std;
     Room r;
-    if (r.lampCount() != 0)
-        cout << "Hiba: ures szobaban nem lehet lampa\n";
-    r.add(new Lamp("Desk lamp"));
-    if (r.lampCount() != 1)
-        cout << "Hiba: nem 1 lampa van a szobaban\n";
-    r[0].turnOn();
-    if (!r[0].isOn())
-        cout << "Hiba: nincs felkapcsolva a lampa\n";
-    r.setAllLamps(false);
-    r.add(new RGBLamp("Ceiling lamp"));
-    if (r.lampCount() != 2)
-        cout << "Hiba: nem 2 lampa van a szobaban\n";
-    r[1].turnOn();
-    if (!r[1].isOn())
-        cout << "Hiba: nincs felkapcsolva a 2. lampa\n";
-    r.add(new RGBLamp("Kitchen lamp"));
-    if (r.lampCount() != 3)
-        cout << "Hiba: nem 3 lampa van a szobaban\n";
-    r.setAllLamps(true);
-    r.add(new Lamp("Reading lamp"));
-    if (r.lampCount() != 4)
-        cout << "Hiba: nem 4 lampa van a szobaban\n";
-    r.setAllLamps(false);
-    r.setAllLamps(true);
-    r.clear();
-    if (r.lampCount() != 0)
-        cout << "Hiba: kiuritett szobaban nem lehet lampa\n";
-    RGBLamp *rl = new RGBLamp("Bedside lamp");
-    rl->setColor(64, 12, 36);
-    r.add(rl);
-    if (rl->getRed() != 0 || rl->getGreen() != 0 || rl->getBlue() != 0)
-        cout << "Hiba: a kikapcsolt lampa szine nem fekete.\n";
-    r.setAllLamps(true);
-    if (rl->getRed() != 64 || rl->getGreen() != 12 || rl->getBlue() != 36)
-        cout << "Hiba: az RGB lampa nem a kert szinu.\n";
-    r.add(new Lamp("Floor lamp"));
-    if (r.lampCount() != 2)
-        cout << "Hiba: nem 2 lampa van a szobaban\n";
-    r.setAllLamps(true);
-    r.setAllLamps(false);
+if (r.lampCount() != 0)
+    cout << "Hiba: ures szobaban nem lehet lampa\n";
+r.add(new Lamp("Desk lamp"));
+if (r.lampCount() != 1)
+    cout << "Hiba: nem 1 lampa van a szobaban\n";
+r[0].turnOn();
+if (!r[0].isOn())
+    cout << "Hiba: nincs felkapcsolva a lampa\n";
+r.setAllLamps(false);
+r.add(new RGBLamp("Ceiling lamp"));
+r.setColor(80,20,40);
+if (r[0].isOn())
+    cout << "Hiba: nem kapcsolt ki a hagyomanyos lampa\n";
+r[1].turnOn();
+if (!r[1].isOn())
+    cout << "Hiba: nincs felkapcsolva a 2. lampa\n";
+r.setAllLamps(true);
+if (r.lampCount() != 2)
+    cout << "Hiba: nem 2 lampa van a szobaban\n";
+r.add(new RGBLamp("Kitchen lamp"));
+if (r.lampCount() != 3)
+    cout << "Hiba: nem 3 lampa van a szobaban\n";
+r.setColor(65,120,230);
+r.setAllLamps(true);
+r.add(new Lamp("Reading lamp"));
+if (r.lampCount() != 4)
+    cout << "Hiba: nem 4 lampa van a szobaban\n";
+r.setAllLamps(false);
+r.setAllLamps(true);
+r.setColor(31,79,53);
+r.setAllLamps(true);
+r.setColor(140,55,44);
+r.setAllLamps(false);
+r.clear();
+if (r.lampCount() != 0)
+    cout << "Hiba: kiuritett szobaban nem lehet lampa\n";
+RGBLamp* rl = new RGBLamp("Bedside lamp");
+r.add(rl);
+r.setColor(64, 12, 36);
+if (rl->getRed() != 0 || rl->getGreen() != 0 || rl->getBlue() != 0)
+    cout << "Hiba: a kikapcsolt lampa szine nem fekete.\n";
+r.setAllLamps(true);
+if (rl->getRed() != 64 || rl->getGreen() != 12 || rl->getBlue() != 36)
+    cout << "Hiba: az RGB lampa nem a kert szinu.\n";
+r.add(new Lamp("Floor lamp"));
+if (r.lampCount() != 2)
+    cout << "Hiba: nem 2 lampa van a szobaban\n";
+r.setAllLamps(true);
+r.setAllLamps(false);
     return 0;
 }
